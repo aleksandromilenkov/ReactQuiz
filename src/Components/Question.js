@@ -7,7 +7,7 @@ const Question = ({ question, dispatch, index, answer }) => {
       <h4>{question.question}</h4>
       <Options question={question} dispatch={dispatch} answer={answer} />
 
-      <p>{question.points}</p>
+      <p>This question is: {question.points} points</p>
     </div>
   );
 };

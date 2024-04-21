@@ -1,8 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
-import DateCounter from "./DateCounter";
 import Header from "./Components/Header";
 import Main from "./Components/Main";
-import { type } from "@testing-library/user-event/dist/type";
 import Loader from "./Components/Loader";
 import Error from "./Components/Error";
 import StartScreen from "./Components/StartScreen";
@@ -11,6 +9,8 @@ import NextButton from "./Components/NextButton";
 import Progress from "./Components/Progress";
 import FinishScreen from "./Components/FinishScreen";
 import FinishButton from "./Components/FinishButton";
+import Footer from "./Components/Footer";
+import Timer from "./Components/Timer";
 const initialState = {
   questions: [],
   status: "loading",
@@ -18,6 +18,7 @@ const initialState = {
   answer: null,
   points: 0,
   highscore: 0,
+  secondsRemaining: 200,
 };
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -70,6 +71,21 @@ export const reducer = (state, action) => {
             ? state.points + currentQuestion.points
             : state.points,
       };
+    case "countdown":
+      return {
+        ...state,
+        secondsRemaining: state.secondsRemaining - 1,
+        status: state.secondsRemaining === 0 ? "finished" : state.status,
+      };
+    case "restart":
+      return {
+        ...state,
+        status: "active",
+        index: 0,
+        points: 0,
+        answer: null,
+        secondsRemaining: 200,
+      };
 
     default:
       throw new Error("Unknown action");
@@ -77,8 +93,10 @@ export const reducer = (state, action) => {
 };
 
 const App = () => {
-  const [{ questions, status, index, answer, points, highscore }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { questions, status, index, answer, points, highscore, secondsRemaining },
+    dispatch,
+  ] = useReducer(reducer, initialState);
   const maximumPoints = questions.reduce((acc, val) => acc + val.points, 0);
   useEffect(() => {
     dispatch({ type: "dataLoading" });
@@ -114,11 +132,14 @@ const App = () => {
               index={index}
               answer={answer}
             />
-            {index + 1 === questions.length ? (
-              <FinishButton dispatch={dispatch} />
-            ) : (
-              <NextButton dispatch={dispatch} answer={answer} />
-            )}
+            <Footer>
+              <Timer dispatch={dispatch} seconds={secondsRemaining} />
+              {index + 1 === questions.length ? (
+                <FinishButton dispatch={dispatch} />
+              ) : (
+                <NextButton dispatch={dispatch} answer={answer} />
+              )}
+            </Footer>
           </>
         )}
         {status === "finished" && (
@@ -126,6 +147,7 @@ const App = () => {
             points={points}
             maxPossiblePoints={maximumPoints}
             highscore={highscore}
+            dispatch={dispatch}
           />
         )}
       </Main>
