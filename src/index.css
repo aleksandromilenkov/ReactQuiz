@@ -257,3 +257,12 @@ progress {
   font-size: inherit;
   padding: 0.8rem;
 }
+
+@media only screen and (max-width: 630px) {
+  html {
+    font-size: 50%;
+  }
+  .app-header {
+    width: 50rem;
+  }
+}
