@@ -9,12 +9,15 @@ import StartScreen from "./Components/StartScreen";
 import Question from "./Components/Question";
 import NextButton from "./Components/NextButton";
 import Progress from "./Components/Progress";
+import FinishScreen from "./Components/FinishScreen";
+import FinishButton from "./Components/FinishButton";
 const initialState = {
   questions: [],
   status: "loading",
   index: 0,
   answer: null,
   points: 0,
+  highscore: 0,
 };
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -38,6 +41,13 @@ export const reducer = (state, action) => {
       return {
         ...state,
         status: "active",
+      };
+    case "finish":
+      return {
+        ...state,
+        status: "finished",
+        highscore:
+          state.points > state.highscore ? state.points : state.highscore,
       };
     case "nextQuestion":
       return {
@@ -67,10 +77,8 @@ export const reducer = (state, action) => {
 };
 
 const App = () => {
-  const [{ questions, status, index, answer, points }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ questions, status, index, answer, points, highscore }, dispatch] =
+    useReducer(reducer, initialState);
   const maximumPoints = questions.reduce((acc, val) => acc + val.points, 0);
   useEffect(() => {
     dispatch({ type: "dataLoading" });
@@ -106,8 +114,19 @@ const App = () => {
               index={index}
               answer={answer}
             />
-            <NextButton dispatch={dispatch} answer={answer} />
+            {index + 1 === questions.length ? (
+              <FinishButton dispatch={dispatch} />
+            ) : (
+              <NextButton dispatch={dispatch} answer={answer} />
+            )}
           </>
+        )}
+        {status === "finished" && (
+          <FinishScreen
+            points={points}
+            maxPossiblePoints={maximumPoints}
+            highscore={highscore}
+          />
         )}
       </Main>
     </div>
