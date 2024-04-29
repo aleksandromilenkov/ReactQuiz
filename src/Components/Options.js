@@ -2,7 +2,6 @@ import React, { useReducer, useState } from "react";
 import { reducer } from "../App";
 
 const Options = ({ question, dispatch, answer }) => {
-  console.log(answer, question.correctOption);
   const isAnswered = answer !== null;
   return (
     <div className="options">

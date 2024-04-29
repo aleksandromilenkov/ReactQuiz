@@ -1,7 +1,10 @@
 import React from "react";
+import { useQuiz } from "../contexts/QuizContext";
 
-const FinishScreen = ({ points, maxPossiblePoints, highscore, dispatch }) => {
-  const percentage = (points / maxPossiblePoints) * 100;
+const FinishScreen = () => {
+  const { questions, points, highscore, dispatch } = useQuiz();
+  const maximumPoints = questions.reduce((acc, val) => acc + val.points, 0);
+  const percentage = (points / maximumPoints) * 100;
   let emoji;
   if (percentage === 100) emoji = "🥇";
   if (percentage >= 70 && percentage < 100) emoji = "😄";
@@ -11,14 +14,13 @@ const FinishScreen = ({ points, maxPossiblePoints, highscore, dispatch }) => {
     JSON.parse(localStorage.getItem("highscoreReactQuiz")) || 0;
   console.log(storedHighscore);
   if (storedHighscore < highscore) {
-    console.log("first");
     JSON.stringify(localStorage.setItem("highscoreReactQuiz", highscore));
   }
   return (
     <>
       <p className="result">
         <span>{emoji}</span>You scored <strong>{points}</strong> out of{" "}
-        {maxPossiblePoints} ({Math.ceil(percentage)}%){" "}
+        {maximumPoints} ({Math.ceil(percentage)}%){" "}
       </p>
       <p className="highscore">
         (Highscore:{" "}

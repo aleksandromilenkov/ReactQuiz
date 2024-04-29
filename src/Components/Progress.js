@@ -1,11 +1,17 @@
 import React from "react";
+import { useQuiz } from "../contexts/QuizContext";
 
-const Progress = ({ index, numQuestions, points, maximumPoints, answer }) => {
+const Progress = () => {
+  const { questions, index, answer, points } = useQuiz();
+  const maximumPoints = questions.reduce((acc, val) => acc + val.points, 0);
   return (
     <header className="progress">
-      <progress max={numQuestions} value={index + Number(answer !== null)} />
+      <progress
+        max={questions.length}
+        value={index + Number(answer !== null)}
+      />
       <p>
-        Question <strong>{index + 1}</strong> / {numQuestions}{" "}
+        Question <strong>{index + 1}</strong> / {questions.length}{" "}
       </p>
       <p>
         <strong>

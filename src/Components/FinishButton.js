@@ -1,6 +1,8 @@
 import React from "react";
+import { useQuiz } from "../contexts/QuizContext";
 
-const FinishButton = ({ dispatch }) => {
+const FinishButton = () => {
+  const { dispatch } = useQuiz();
   return (
     <button
       className="btn btn-ui"
